@@ -22,7 +22,7 @@ function convertData(state) {
                 })
             }
         })
-
+        
         // 每个county的都加完了，push到res里面
         res.push({
             name: state_name,

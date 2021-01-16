@@ -5,7 +5,27 @@ import {store} from "../store";
 import { ArrowBackSharp } from '@material-ui/icons';
 
 function convertData(state) {
-
+    let res = [];
+    for(let i=0; i<state.inLine.length; i++) {   
+        let state_name = state.inLine[i];
+        state.data.forEach(function(item, index, arr){  
+            if(item.province_name === state_name){   
+                //遍历county
+                res.children = res.children || [];
+                var child = {
+                    name: item.county_name,
+                    value: item.confirmed_data
+                };
+                res.children.push(child);
+            }
+        })
+        //遍历state
+        res.push({
+            name: state_name,
+            children: res.children
+        })
+    }
+    return res;
 }
 
 function DetailView() {
@@ -59,11 +79,6 @@ function DetailView() {
         return option
     };
     let onEvents = {
-        // 点击后把学校加入雷达图
-        'click': function (params) {
-            var action = 'addRadar_' + params.name
-            dispatch({type: action})
-        }
     }
 
     return <ReactEcharts option={getOption()}

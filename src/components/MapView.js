@@ -73,6 +73,7 @@ function LoadFullData(state) {
 }
 
 function MapView(){
+    // const {state, changeState} = useState()
     const {state, dispatch} = useContext(store);
     echarts.registerMap('USA', usaJson, {
         // 部分区域调整位置
@@ -98,9 +99,12 @@ function MapView(){
                 timeline: {
                     left:'left',
                     right :'left',
-                    loop: true,
-                    //autoPlay: true,
-                    playInterval: 500,
+                    loop: false,
+                    autoPlay: function(){ 
+                        console.log(state.time_play)
+                        return state.time_play;}(),
+                    currentIndex: state.date,
+                    playInterval: 800,
                     tooltip: {
                         formatter: function(params) {
                         return params.name;
@@ -279,17 +283,13 @@ function MapView(){
     let onEvents = {
         
         'click': function(params){ // YRH 点击省份更换省份
-            console.log("click");
+            //console.log("click");
             console.log(params);
             // 点击地图上的州，传给dispatch需要一个州的数据
             if (params.componentType === 'series'){
                 let action = 'addState_' + params.name;
                 dispatch({type: action});
             }
-            // else if (params.componentType === 'series') {
-            //     let action = 'addRadar_' + params.data.name;
-            //     dispatch({type: action}); 
-            // }
         },
 
         'legendselectchanged': function(params) {   // YRH 点击legend改变mode
@@ -304,6 +304,19 @@ function MapView(){
                 let action = 'changeMode_confirmed' + params.name;
                 dispatch({type: action});
             }
+        },
+
+        'timelinechanged': function(params) {   // 时间轴刷新
+            
+            //console.log(params);
+            //console.log('change the date:' + params.currentIndex.toString());
+            let action = 'changeDate_' + params.currentIndex;
+            dispatch({type: action});
+        },
+        'timelineplaychanged': function(params) {
+            console.log(params.playState);   
+            let action = 'changeTimePlay_' + params.playState;
+            dispatch({type: action});
         }
     }
 

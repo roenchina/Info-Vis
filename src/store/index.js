@@ -7,10 +7,9 @@ import {fetchCsvData } from "./api";
 // 初始数据
 const initialState = {
     count: 0,
-    weight: [1,1,1,1,1],    // 5个维度的权重
-    inRadar: [],            // 雷达图中应该显示的学校名称
     province: null,
     date: 0,
+    time_play:false,
     mode: "confirmed",      // YRH 显示确诊或死亡
     inLine: [],             // YRH 折线图里面应该显示的州的名字
     data: [],
@@ -60,57 +59,8 @@ const reducer = (state, action) => {
             province: null
         };
     } 
-    else if(action.type === 'reset'){
-        return {
-            ...state,
-            weight: [1,1,1,1,1]
-        };
-    }
     var add = action.type.split('_')
-    if(add[0] === 'incWeight')
-    {
-        let idx = parseInt(add[1])
-        let newW = state.weight
-        newW[idx] = newW[idx]+1 > 10 ? 10:newW[idx]+1
-        return {
-            ...state,
-            weight: newW
-        };
-    } 
-    else if (add[0] === 'decWeight'){
-        let idx = parseInt(add[1])
-        let newW = state.weight
-        newW[idx] = newW[idx]-1 < 0 ? 0:newW[idx]-1
-        return {
-            ...state,
-            weight: newW
-        };
-        
-    } 
-    else if(add[0] === 'addRadar'){
-        let college = add[1]
-        let newR = state.inRadar
-        newR.push(college)
-        return {
-            ...state,
-            inRadar: newR
-        };
-    } 
-    else if(add[0] === 'rvmRadar'){
-        let college = add[1]
-        let newR = state.inRadar
-        // 从newR中删除=college的元素
-        newR.forEach(
-            function(item, index, arr) {
-                if(item === college)
-                    arr.splice(index, 1);
-        });
-        return {
-            ...state,
-            inRadar: newR
-        };
-    } 
-    else if(add[0] === 'addState'){ // YRH 加入一个州
+    if(add[0] === 'addState'){ // YRH 加入一个州
         let newLine = state.inLine;  // YRH 更行折线图inLine变量
         let i;
         for(i=0; i<newLine.length; i++)
@@ -129,6 +79,23 @@ const reducer = (state, action) => {
         return {
             ...state,
             mode: add[1]
+        }
+    }
+    else if(add[0] === 'changeDate'){
+        return {
+            ...state,
+            date: parseInt(add[1])
+        }
+    }
+    else if(add[0] === 'changeTimePlay'){
+        if(add[1] === 'true')
+        return {
+            ...state,
+            time_play:true
+        }
+        return {
+            ...state,
+            time_play:false
         }
     }
     else

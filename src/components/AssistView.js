@@ -30,7 +30,7 @@ function convertData(state) {
             data: this_state_data,  // YRH 是一个30天的数组
         });
     }
-    console.log(res);
+    //console.log(res);
     return res;
 }
 

@@ -6,26 +6,39 @@ import { ArrowBackSharp } from '@material-ui/icons';
 
 function convertData(state) {
     let res = [];
+
+    // TODO: 改成对所有州进行循环
     for(let i=0; i<state.inLine.length; i++) {   
         let state_name = state.inLine[i];
+
+        let state_children = [];
         state.data.forEach(function(item, index, arr){  
             if(item.province_name === state_name){   
                 //遍历county
-                res.children = res.children || [];
-                var child = {
+                // res.children = res.children || [];
+
+                var child = {   // note 构造某个county的数据
                     name: item.county_name,
                     value: item.confirmed_data
                 };
-                res.children.push(child);
+
+                state_children.push(child); // note 把这个county的数据push到州里面
             }
         })
-        //遍历state
+        // note 出来这个forEach循环之后，state_children里面已经包含所有child：{children: { [name: county_name, value: ], [], [], ...}}
+
+        // note 构造完整的州的数据并push到res里面
         res.push({
-            name: state_name,
-            children: res.children
+            name: state_name,   // 州名
+            children: state_children    // 州children
         })
     }
-    return res;
+    // note: 出来这个for循环之后，res里面已经包含每个州的数据
+
+    return {
+        name: 'USA',
+        children: res
+    };
 }
 
 function DetailView() {

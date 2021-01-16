@@ -9,17 +9,18 @@ function convertData(state) {
     // console.log("length of state: ", state.data.length);
     var state_name_last = "";
     // 遍历state
-    for(let i=0; i<state.data.length; i++) {   
+    for(let i=0; i<state.data.length-1; i++) {   
         //得到当前state
         let state_name = state.data[i].province_name;
         //与上一个state重复则跳过
-        if (state_name != state_name_last){
+        if (state_name !== state_name_last){
             let state_children = [];
             let state_value = 0;
             //遍历state
             state.data.forEach(function(item, index, arr){  
                 if(item.province_name === state_name){   
                     //遍历该state下的county
+                    console.log(state.date);
                     state_value += item.confirmed_4_30;
                     var child = {
                         name: item.county_name,

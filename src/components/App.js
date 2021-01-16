@@ -4,7 +4,6 @@ import React from 'react';
 import clsx from "clsx";
 import {makeStyles} from "@material-ui/core";
 import AssistView from "./AssistView";
-import ControlPanel from "./ControlPanel";
 import DetailView from "./DetailView";
 import MapView from "./MapView";
 
@@ -24,19 +23,12 @@ const useStyles = makeStyles(theme => ({
         padding: '0 30px',
         background: '#FFFFFF',
     },
-    controlPanel: {
-        position: 'absolute',
-        top: 70,
-        bottom: 70,
-        left: 70,
-        width: 100,
-    },
     detailView: {
         position: 'absolute',
         top: 20,
         left: 950,
         bottom: 50,
-        width: 350,
+        width: 700,
     },
     assistView: {
         position: 'absolute',

@@ -62,7 +62,7 @@ function DetailView() {
             },
             tooltip: {},
             series: [{
-                name: 'option',
+                name: 'USA',
                 type: 'treemap',
                 visibleMin: 300,
                 data: convertData(state),
@@ -102,7 +102,7 @@ function DetailView() {
     }
 
     return <ReactEcharts option={getOption()}
-             style={{height: '700px', width: '100%'}}
+             style={{height: '95%', width: '100%'}}
              onEvents={onEvents} />;
 
 }

@@ -115,7 +115,7 @@ function AssistView() {
     }
 
     return <ReactEcharts option={getOption()}
-             style={{height: '300px', width: '100%'}}
+             style={{height: '350px', width: '100%'}}
              onEvents={onEvents} />;
 }
 

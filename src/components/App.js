@@ -63,9 +63,9 @@ function App() {
     // 可视化项目中，若干视图一般采用绝对布局，方便后续调整各个视图的位置与大小
     return(
         <div className={classes.root}>
-            <div className={clsx(classes.view, classes.controlPanel)}><ControlPanel/></div>
+            {/* <div className={clsx(classes.view, classes.controlPanel)}><ControlPanel/></div>
+            <div className={clsx(classes.view, classes.detailView)}><DetailView/></div>  */}
             <div className={clsx(classes.view, classes.assistView)}><AssistView/></div>
-            <div className={clsx(classes.view, classes.detailView)}><DetailView/></div> 
             <div className={clsx(classes.view, classes.mapView)}><MapView/></div>
         </div>
     );

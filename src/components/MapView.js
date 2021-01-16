@@ -4,21 +4,16 @@ import ReactEcharts from 'echarts-for-react';
 import {store} from "../store";
 import '../index.css';
 import echarts from 'echarts';
-import usaJson from '../USA.json'; // 使用中国地图数据
-// import { provienceData } from '../store/geoData';
+import usaJson from '../USA.json'; // 使用美国地图数据
 
 
-// 把index中的数据转化为视图所需要的数据
-
-
-function convertData(state,mode) {
+// 按日期取出某一天confirmed/deaths的数据
+function convertData(state,mode,date) {
     let data = state.data
     if (data.length === 0)
         return;
-    let date = state.date;
     const res = [];
     let temp={};
-    console.log(state);
     temp.name = data[0].province_name;
     temp.value = 0;
     if(mode === 0){ // confirmed_data
@@ -53,6 +48,30 @@ function convertData(state,mode) {
     return res;
 }
 
+/* 读取所有日期的数据，直接传回给options */
+function LoadFullData(state) {
+    
+    let FullData = [];
+    let data = state.data;
+    if (data.length === 0)
+        return;
+    for (let i = 0; i < data[0].confirmed_data.length-1; i++)
+    {
+        let name = '';
+        if(i<14)
+            name = 'USA confirmed cases and deaths (2020-3-' + (i+18).toString() + ')';
+        else
+            name = 'USA confirmed cases and deaths (2020-4-' + (i-13).toString() + ')';
+        FullData.push(
+        {
+            title: { text: name},
+            series: [{data:convertData(state,0,i)},{data:convertData(state,1,i)},]
+        } 
+        )
+    }
+    return FullData;
+}
+
 function MapView(){
     const {state, dispatch} = useContext(store);
     echarts.registerMap('USA', usaJson, {
@@ -75,127 +94,186 @@ function MapView(){
     });
     const getOption = () => {
         var option = {
-            
-            animation:false,
-            title: {
-                text: 'USA confirmed cases and deaths (2020)',
-                subtext: 'Data from CSSEGISandData',
-                subtextStyle:{fontSize: '15'},
-                left: 'left',
-                top:'5%'
-            },
-            tooltip: {
-                trigger: 'item',
-                showDelay: 0,
-                transitionDuration: 0.2,
-                enterable: true,
-                formatter: function (params) {
-                    var value = (params.value + '').split('.');
-                    value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
-                    return params.seriesName + '<br/>' + params.name + ': ' + value;
+            baseOption: {
+                timeline: {
+                    left:'left',
+                    right :'left',
+                    loop: true,
+                    //autoPlay: true,
+                    playInterval: 500,
+                    tooltip: {
+                        formatter: function(params) {
+                        return params.name;
+                        }
+                    },
+                    axisType: 'category',
+                    label:{
+                        color: '#000000',
+                        formatter: function (value, index) {
+                            // 格式化成月/日，只在第一个刻度显示年份
+                            if(index === 0 || index === 14 || index === 43 || 
+                                index<12&&index>3&&(index-1)%3===0 || index>14&&(index-12)%4===0)
+                            {
+                                var date = new Date(value);
+                                var texts = [(date.getMonth() + 1), date.getDate()];
+                                if (index === 0) {
+                                    texts.unshift('2020');
+                                }
+                                return texts.join('/');
+                            }
+                            return '' 
+                        },
+                        interval: 0,
+                    },
+                    emphasis: { controlStyle:{color: '#800026',} },
+                    data:[ 
+                        {
+                            value: '2020-03-18',
+                            symbol: 'diamond',  // 此项的图形的特别设置。
+                            symbolSize: 18,      // 此项的图形大小的特别设置。
+                            tooltip: {
+                                formatter: function(params) {
+                                return params.name + '<br>' + '疫情开始爆发';
+                                }
+                            },
+                        },    
+                        '2020-03-19','2020-03-20','2020-03-21','2020-03-22','2020-03-23',
+                        '2020-03-24','2020-03-25','2020-03-26','2020-03-27','2020-03-28','2020-03-29','2020-03-30',
+                        '2020-03-31',
+                        {
+                            value: '2020-04-01',
+                            symbol: 'diamond',  // 此项的图形的特别设置。
+                            symbolSize: 18,      // 此项的图形大小的特别设置。
+                            tooltip: {
+                                formatter: function(params) {
+                                return params.name + '<br>' + '感染人数剧增';
+                                }
+                            },
+                        },
+                        '2020-04-02','2020-04-03','2020-04-04','2020-04-05','2020-04-06','2020-04-07','2020-04-08','2020-04-09',
+                        '2020-04-10','2020-04-11','2020-04-12','2020-04-13','2020-04-14','2020-04-15','2020-04-16','2020-04-17',
+                        '2020-04-18','2020-04-19','2020-04-20','2020-04-21','2020-04-22','2020-04-23','2020-04-24','2020-04-25',
+                        '2020-04-26','2020-04-27','2020-04-28','2020-04-29',
+                        {
+                            value: '2020-04-30',
+                            symbol: 'diamond',
+                            symbolSize: 18,
+                            tooltip: {
+                                formatter: function(params) {
+                                return params.name + '<br>' + '形式一片危机';
+                                }
+                            },
+                        },],
                 },
-                textStyle:{
-                    fontWeight:'bold',
-                    textBorderColor:'black',
-                    textBorderWidth:'2',
-                    fontSize:'16',
+                title: {
+                    subtext: 'Data from CSSEGISandData',
+                    subtextStyle:{fontSize: '15'},
+                    left: 'left',
+                    top:'5%'
+                },
+                animation:false,
+                tooltip: {
+                    trigger: 'item',
+                    showDelay: 0,
+                    transitionDuration: 0.2,
+                    enterable: true,
+                    formatter: function (params) {
+                        var value = (params.value + '').split('.');
+                        value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
+                        return params.seriesName + '<br/>' + params.name + ': ' + value;
+                    },
+                    textStyle:{
+                        fontWeight:'bold',
+                        textBorderColor:'black',
+                        textBorderWidth:'2',
+                        fontSize:'16',
+                    }
+                },
+                visualMap: [
+                {
+                    type: 'continuous',
+                    left: '82%',
+                    top:'50%',
+                    seriesIndex:0,
+                    inRange: {
+                    color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
+                    },
+                    min:0,
+                    max:3000,
+                    text: ['High', 'Low'],           // 文本，默认为数值文本
+                    calculable: true,
+                    hoverLink:true
+                },
+                {
+                    type: 'continuous',
+                    left: 'right',
+                    top:'50%',
+                    seriesIndex:1,
+                    inRange: {
+                    color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
+                    },
+                    min:0,
+                    max:200,
+                    text: ['High', 'Low'],           // 文本，默认为数值文本
+                    calculable: true,
+                    hoverLink:true
                 }
-            },
-            visualMap: [
-            {
-                type: 'continuous',
-                left: '82%',
-                top:'bottom',
-                seriesIndex:0,
-                inRange: {
-                color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
-                },
-                text: ['High', 'Low'],           // 文本，默认为数值文本
-                calculable: true,
-                hoverLink:true
-            },
-            {
-                type: 'continuous',
-                left: 'right',
-                top:'bottom',
-                seriesIndex:1,
-                inRange: {
-                color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
-                },
-                text: ['High', 'Low'],           // 文本，默认为数值文本
-                calculable: true,
-                hoverLink:true
-            }
-            ],
-            color:['#08519c','#bd0026'], // 图例的颜色
-            legend: {
-                show: 'true',
-                icon: 'roundRect',
-                data: ['USA confirmed cases','USA deaths'],
-                left: 'right',
-                top: '5%',
-                selectedMode:'single', // 设置为单选模式,或者是确诊,或者是死亡人数
-                textStyle:{
-                    fontWeight:'bold',
-                    fontSize: 14,
+                ],
+                color:['#08519c','#bd0026'], // 图例的颜色
+                legend: {
+                    show: 'true',
+                    icon: 'roundRect',
+                    data: ['USA confirmed cases','USA deaths'],
+                    left: 'right',
+                    top: '5%',
+                    selectedMode:'single', // 设置为单选模式,或者是确诊,或者是死亡人数
+                    textStyle:{
+                        fontWeight:'bold',
+                        fontSize: 14,
 
-                }
+                    }
+                },
+                series: [
+                    {
+                        type: 'map',
+                        map:'USA',
+                        name: 'USA confirmed cases',
+                        showLegendSymbol:false,
+                        layoutCenter: ['45%', '55%'],
+                        layoutSize: 700,
+                        roam: true,
+                        scaleLimit:{min:0.6,max:5},
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize:18,
+                            }
+                        },
+                    },
+                    {
+                        type: 'map',
+                        map:'USA',
+                        name:'USA deaths',
+                        showLegendSymbol:false,
+                        layoutCenter: ['45%', '55%'],
+                        layoutSize: 700,
+                        roam: true,
+                        scaleLimit:{min:0.6,max:5},
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize:18,
+                            }
+                        },
+                    },
+                ]
             },
-            series: [
-                {
-                    type: 'map',
-                    map:'USA',
-                    name: 'USA confirmed cases',
-                    showLegendSymbol:false,
-                    layoutCenter: ['45%', '55%'],
-                    layoutSize: 700,
-                    roam: true,
-                    scaleLimit:{min:0.6,max:5},
-                    emphasis: {
-                        label: {
-                            show: true,
-                            fontSize:18,
-                        }
-                    },
-                    textFixed: {
-                        Alaska: [50, -20]
-                    },
-                    data: convertData(state,0)
-                },
-                {
-                    type: 'map',
-                    map:'USA',
-                    name:'USA deaths',
-                    showLegendSymbol:false,
-                    layoutCenter: ['45%', '55%'],
-                    layoutSize: 700,
-                    roam: true,
-                    scaleLimit:{min:0.6,max:5},
-                    emphasis: {
-                        label: {
-                            show: true,
-                            fontSize:18,
-                        }
-                    },
-                    textFixed: {
-                        Alaska: [50, -20]
-                    },
-                    data: convertData(state,1)
-                },
-            ],
-        }
+            options:LoadFullData(state)
+    }
         return option;
     };
     let onEvents = {
-        // 'mouseover': function(params){        //鼠标放上颜色变红
-        //     console.log("mouseover, ", params);
-        //     if (params.componentType === 'series') {
-        //         params.event.target.style.text = params.data.name + "\n\r分数" + params.data.score.toFixed(2); // 手动实现悬停显示
-        //     }
-        //     params.color = '#d50000';
-        //     params.event.target.style.fill = '#d50000';
-        // },
-
+        
         'click': function(params){ // YRH 点击省份更换省份
             console.log("click");
             console.log(params);
@@ -211,6 +289,8 @@ function MapView(){
         },
 
         'legendselectchanged': function(params) {   // YRH 点击legend改变mode
+
+            params.selected = true;
             if(params.name === 'USA deaths'){
                 console.log("death selected");
                 let action = 'changeMode_deaths';

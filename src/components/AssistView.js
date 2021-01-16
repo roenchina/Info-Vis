@@ -4,78 +4,108 @@ import React, {useContext} from 'react';
 import {store} from "../store";
 import ReactEcharts from "echarts-for-react";
 
+function convertData(state) {
+    let res = [];
+
+    for(let i=0; i<state.inLine.length; i++) {   // YRH 对每一个需要加入的省份
+        let state_name = state.inLine[i];
+
+        let this_state_data = new Array(45).fill(0);
+
+        state.data.forEach(function(item, index, arr){  // YRH 遍历所有数据列表
+            if(item.province_name === state_name){   // YRH 如果为当前省份的某数据列表
+
+                let former = this_state_data;
+                let to_add = (state.mode==='deaths' ? item.deaths_data : item.confirmed_data);
+                former.forEach(function(v, index){
+                    this_state_data[index] = v + to_add[index];
+                })
+            }
+        })
+
+        // 每个county的都加完了，push到res里面
+        res.push({
+            name: state_name,
+            type: 'line',
+            data: this_state_data,  // YRH 是一个30天的数组
+        });
+    }
+    console.log(res);
+    return res;
+}
+
 function AssistView() {
     // 使用StateProvider提供的数据环境
     const {state, dispatch} = useContext(store);
     const getOption = () => {
-        console.log(state.data);
         var option = {
-            tooltip:{},
-            legend: {
-                type: 'scroll',
-                orient: 'vertical',
-                top: 15,
-                left: 0,
-                data:(function (){
-                    return state.inRadar
-                })()
-            },
-            radar: {
-                name: {
-                    textStyle: {
-                        color: '#fff',
-                        backgroundColor: '#999',
-                        borderRadius: 3,
-                        padding: [3, 5]
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    animation: false,
+                    label: {
+                        backgroundColor: '#ccc',
+                        borderColor: '#aaa',
+                        borderWidth: 1,
+                        shadowBlur: 0,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        color: '#222'
                     }
                 },
-                indicator: [
-                    { name: '师资力量', max: 100},
-                    { name: '科研水平', max: 100},
-                    { name: '科研经费', max: 100},
-                    { name: '就业水平', max: 100},
-                    { name: '国际化率', max: 100}
-                ]
+                // formatter: function (params) {
+                //     return params[2].name + '<br />' + ((params[2].value - base) * 100).toFixed(1) + '%';
+                // }
             },
-            series: (function (){
-                var series = [];
-                console.log(series);
-                // 遍历雷达列表
-                for(let i=0; i<state.inRadar.length; i++){
-                    let clgData = {score:[0,0,0,0,0]};
-                    // 遍历数据列表
-                    state.data.forEach(function(item, index, arr){
-                        if(item.college===state.inRadar[i]){
-                            clgData = item;
-                            console.log(item);
-                            return;
-                        }
-                    })
-                    series.push({
-                        name: 'College Data',
-                        type: 'radar',
-                        symbol: 'none',
-                        areaStyle: {
-                            normal: {}
-                        },
-                        data:[{
-                            value: clgData.score,
-                            name: state.inRadar[i]
-                        }]
-                    });
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '40%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: [],   // TODO 横轴数据
+                // data.map(function (item) {
+                //     return item.date;
+                // }),
+                axisLabel: {
+                    formatter: function (value, idx) {
+                        var date = new Date(idx);
+                        return idx;
+                    }
+                },
+                splitLine: {
+                    show: false
+                },
+                boundaryGap: false
+            },
+
+            yAxis: {
+                axisLabel: {
+                    // formatter: function (val) {
+                    //     return (val - base) * 100 + '%';
+                    // }
+                },
+                axisPointer: {
+                    // label: {
+                    //     formatter: function (params) {
+                    //         return ((params.value - base) * 100).toFixed(1) + '%';
+                    //     }
+                    // }
+                },
+                splitNumber: 3,
+                splitLine: {
+                    show: false
                 }
-                return series
-            })()
+            },
+            series: convertData(state)
         };
         return option
     };
 
     let onEvents = {
-        // 点击后把学校从雷达图中去除
-        'click': function (params) {
-            var action = 'rvmRadar_' + params.name
-            dispatch({type: action})
-        }
     }
 
     return <ReactEcharts option={getOption()}

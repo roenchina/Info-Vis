@@ -11,7 +11,7 @@ import usaJson from '../USA.json'; // 使用中国地图数据
 // 把index中的数据转化为视图所需要的数据
 
 
-function convertData(state) {
+function convertData(state,mode) {
     let data = state.data
     if (data.length === 0)
         return;
@@ -21,22 +21,34 @@ function convertData(state) {
     console.log(state);
     temp.name = data[0].province_name;
     temp.value = 0;
-    for (let i = 0; i < data.length; i++) 
-    {
-        //console.log(date);
-        //console.log(data[i].confirmed_data[0]);
+    if(mode === 0){ // confirmed_data
+        for (let i = 0; i < data.length; i++) {
         if(data[i].province_name === temp.name)
             temp.value += data[i].confirmed_data[date];
-        else
-        {
+        else{
             res.push({
                 name: temp.name,
                 value: temp.value,
             });
             temp.name = data[i].province_name;
             temp.value = data[i].confirmed_data[date];
-        }   
+            }   
+        }
     }
+    else{ // deaths_data
+        for (let i = 0; i < data.length; i++) {
+            if(data[i].province_name === temp.name)
+                temp.value += data[i].deaths_data[date];
+            else{
+                res.push({
+                    name: temp.name,
+                    value: temp.value,
+                });
+                temp.name = data[i].province_name;
+                temp.value = data[i].deaths_data[date];
+                }   
+            }
+        }
     console.log(res);
     return res;
 }
@@ -61,19 +73,9 @@ function MapView(){
             width: 5
         }
     });
-    // for (const item of provienceData) {
-
-    //         item.itemStyle = {
-    //             normal: {
-    //                 areaColor: '#D009D9',
-    //             },
-    //             emphasis: {
-    //                 areaColor: '#1119D9',
-    //             }
-    //         }
-    // }
     const getOption = () => {
         var option = {
+            
             animation:false,
             title: {
                 text: 'USA confirmed cases and deaths (2020)',
@@ -99,37 +101,86 @@ function MapView(){
                     fontSize:'16',
                 }
             },
-            visualMap: {
-                left: 'right',
+            visualMap: [
+            {
+                type: 'continuous',
+                left: '82%',
                 top:'bottom',
+                seriesIndex:0,
                 inRange: {
-                    // color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
-                    color:['#006837','#1a9850','#66bd63','#a6d96a','#d9ef8b','#ffffbf','#fee08b','#fdae61','#f46d43','#d73027','#a50026']
+                color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
                 },
                 text: ['High', 'Low'],           // 文本，默认为数值文本
                 calculable: true,
                 hoverLink:true
             },
+            {
+                type: 'continuous',
+                left: 'right',
+                top:'bottom',
+                seriesIndex:1,
+                inRange: {
+                color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
+                },
+                text: ['High', 'Low'],           // 文本，默认为数值文本
+                calculable: true,
+                hoverLink:true
+            }
+            ],
+            color:['#08519c','#bd0026'], // 图例的颜色
+            legend: {
+                show: 'true',
+                icon: 'roundRect',
+                data: ['USA confirmed cases','USA deaths'],
+                left: 'right',
+                top: '5%',
+                selectedMode:'single', // 设置为单选模式,或者是确诊,或者是死亡人数
+                textStyle:{
+                    fontWeight:'bold',
+                    fontSize: 14,
+
+                }
+            },
             series: [
                 {
                     type: 'map',
                     map:'USA',
-                    name: function () {
-                        if(state.mapview_mode === 0)
-                            return 'USA confirmed cases';
-                        else
-                            return 'USA deaths';
-                    }(),
+                    name: 'USA confirmed cases',
+                    showLegendSymbol:false,
                     layoutCenter: ['45%', '55%'],
                     layoutSize: 700,
                     roam: true,
                     scaleLimit:{min:0.6,max:5},
                     emphasis: {
                         label: {
-                            show: true
+                            show: true,
+                            fontSize:18,
                         }
                     },
-                    data: convertData(state)
+                    textFixed: {
+                        Alaska: [50, -20]
+                    },
+                    data: convertData(state,0)
+                },
+                {
+                    type: 'map',
+                    map:'USA',
+                    name:'USA deaths',
+                    showLegendSymbol:false,
+                    layoutCenter: ['45%', '55%'],
+                    layoutSize: 700,
+                    roam: true,
+                    scaleLimit:{min:0.6,max:5},
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize:18,
+                        }
+                    },
+                    textFixed: {
+                        Alaska: [50, -20]
+                    },
+                    data: convertData(state,1)
                 },
             ],
         }
@@ -158,7 +209,7 @@ function MapView(){
 
     return <ReactEcharts option={getOption()}
              style={{
-                width: '95%',
+                width: '100%',
                 height: '95%' // 无法调节垂直居中,待解决问题
                }}
              onEvents={onEvents} />;

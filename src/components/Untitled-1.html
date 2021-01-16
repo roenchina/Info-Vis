@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<script src="./echarts.min.js"></script>
+		<script src="./jquery.min.js"></script>
+		<style>
+			html,body {
+				margin: 0;
+				height: 100%;
+				width: 100%;
+			}
+			#main {
+				height: 100%;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="main"></div>
+		<script>
+		    var myChart = echarts.init(document.getElementById('main'));
+			myChart.showLoading();
+			//添加不同时间数据
+			var index=14;
+			var allpos=[];
+			var timeline_data=[];
+			var time_data=[];
+			var town = [
+							{name:'鼓楼街道',value:17},
+							{name:'宋埠良种场',value:0},
+							{name:'龟山风景区',value:0},
+							{name:'龙池街道',value:21},
+							{name:'五脑山林场',value:0},
+							{name:'狮子峰林场',value:0},
+							//{name:'铁路生活区',value:2},
+							{name:'宋埠镇',value:9},
+							{name:'歧亭镇',value:3},
+							{name:'白果镇',value:19},
+							{name:'阎家河镇',value:1},
+							{name:'顺河镇',value:6},
+							{name:'南湖街道',value:5},
+							{name:'龟山镇',value:4},
+							{name:'中馆驿镇',value:4},
+							{name:'三河口镇',value:5},
+							{name:'乘马岗镇',value:8},
+							{name:'夫子河镇',value:5},
+							{name:'张家畈镇',value:2},
+							{name:'麻城开发区',value:7},
+							{name:'木子店镇',value:1},
+							{name:'盐田河镇',value:2},
+							{name:'黄土岗镇',value:3},
+							{name:'福田河镇',value:4},
+							{name:'铁门岗乡',value:9},
+							{name:'麻城三河水库',value:0},
+							{name:'麻城明山水库',value:0},
+							{name:'麻城林店茶场',value:0},
+							{name:'麻城浮桥河水库',value:0},
+						];
+			load_data();
+			$.ajax({
+				url:'data/data.geojson',
+				async:false,
+				dataType:'json',
+				success:function(geoJson) {
+					var name = '麻城';
+					echarts.registerMap(name, geoJson);
+					var option = {
+						baseOption:{
+							backgroundColor: '#051b4a',
+							timeline: {
+								axisType: 'category',
+								// realtime: false,
+								// loop: false,
+								autoPlay: false,
+								
+								label:{
+									color: '#ffffff',
+								},
+								controlStyle:{
+									color: '#ffffff',
+								},
+								
+								playInterval: 500,
+								data:[]
+							},
+							title: {
+							    text: "麻城市疫情地图",
+							
+							    left: 'center',
+							    textStyle: {
+							        color: '#ffffff'
+							    }
+							},
+		
+							geo:{
+								show:true,
+								map:name,
+								label:{
+									position: 'buttom',
+									normal: {
+										show: true,
+										color: '#f3ff01',
+										borderColor: '#ff0000',
+									},
+									fontStyle:'normal',
+									emphasis: {
+										show: true,
+										textStyle: {
+											color: '#fff'
+										}
+									}
+								},
+								itemStyle: {
+									normal: {
+										borderColor: 'rgba(147, 235, 248, 1)',
+										borderWidth: 1,
+										areaColor: {
+											type: 'radial',
+											x: 0.5,
+											y: 0.5,
+											r: 0.8,
+											colorStops: [{
+												offset: 0,
+												color: 'rgba(147, 235, 248, 0)' // 0% 处的颜色
+											}, {
+												offset: 1,
+												color: 'rgba(147, 235, 248, .2)' // 100% 处的颜色
+											}],
+											globalCoord: false // 缺省为 false
+										},
+										shadowColor: 'rgba(128, 217, 248, 1)',
+										// shadowColor: 'rgba(255, 255, 255, 1)',
+										shadowOffsetX: -2,
+										shadowOffsetY: 2,
+										shadowBlur: 10
+									},
+									emphasis: {
+										areaColor: '#9966ff',
+										borderWidth: 0
+									}
+								},	
+							},
+							series: [{
+								name:'麻城市',
+								type: 'map',
+								geoIndex: 0,
+								data:town
+							}],  //series
+						},
+						options:[]
+					}; //option		
+					myChart.hideLoading();
+					option.baseOption.timeline.data = timeline_data;
+					option.options = time_data;
+					myChart.setOption(option);
+				  }
+				
+				});
+		  
+			function load_data(){
+				var pos = [];
+				timeline_data.push('1-'+index.toString());
+				$.ajax({
+					url:'data/202001'+index.toString()+'.json',
+					dataType:'json',
+					async:false,
+					success:function(data){
+						data.forEach(function(item){
+							var lnglat=[parseFloat(item.lng),parseFloat(item.lat)];
+							pos.push(lnglat);
+						})	
+					}
+				});
+				allpos = allpos.concat(pos);
+				time_data.push({
+					series:[{
+						type : 'scatter',
+						symbolSize:4,
+						itemStyle:{
+							borderColor: 'rgba(248, 161, 9, 1)',
+							borderWidth: 4,
+							opacity:0.7
+						},
+						
+						coordinateSystem:'geo',
+						data:allpos
+					}]
+				});
+				if(index===31) {
+					return ;
+				}
+				else{
+					index++;
+					load_data();
+				}
+		  }	
+		 
+		</script>
+	</body>
+</html>
+

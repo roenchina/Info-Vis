@@ -79,7 +79,7 @@ function DetailView() {
                     for(let j=0; j<state.data.length; j++){
                         let tuple = state.data[j]
                         if( flag || tuple.prov === state.province){
-                            console.log(tuple)
+                            // console.log(tuple)
                             // 计算某校总分
                             let score = 0
                             for(let i=0; i<state.weight.length; i++){

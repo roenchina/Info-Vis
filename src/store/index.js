@@ -10,6 +10,8 @@ const initialState = {
     weight: [1,1,1,1,1],    // 5个维度的权重
     inRadar: [],            // 雷达图中应该显示的学校名称
     province: null,
+    date: 0,
+    mapview_mode: 0,
     data: [],
 };
 
@@ -21,22 +23,34 @@ const reducer = (state, action) => {
             ...state,
             count: state.count + 1
         };
-    } else if(action.type === 'init'){
-        var payload = action.payload;
+    } 
+    else if(action.type === 'Init')
+    {
+        const payload = action.payload;
         console.log("payload: ", payload)
-        var newData = payload
+        var newData = payload;
         newData.forEach(function(item, index, arr) {
             item.score = []
-            item.score[0] = item.score0
-            item.score[1] = item.score1
-            item.score[2] = item.score2
-            item.score[3] = item.score3
-            item.score[4] = item.score4
+            // console.log(item);
+            item.county_name = item.Admin2
+            item.province_name = item.Province_State
+            item.population = item.Population
+            item.confirmed_data = []; 
+            item.deaths_data = [];
+            for(let attr in item) 
+                if (attr.split('_')[0] === 'confirmed')
+                    item.confirmed_data.push(item[attr]);
+                else if (attr.split('_')[0] === 'deaths')
+                    item.deaths_data.push(item[attr]);       
+            item.score[1] = payload.score1
+            item.score[2] = payload.score2
+            item.score[3] = payload.score3
+            item.score[4] = payload.score4
             item.coord = []
-            item.coord[0] = item.Long
-            item.coord[1] = item.Lat
+            item.coord[0] = payload.Long
+            item.coord[1] = payload.Lat
         })
-        console.log("newData: ", payload)
+        console.log("newData: ", newData)
         return {
             ...state,
             data: newData,
@@ -45,14 +59,16 @@ const reducer = (state, action) => {
             inRadar: [],
             province: null
         };
-    } else if(action.type === 'reset'){
+    } 
+    else if(action.type === 'reset'){
         return {
             ...state,
             weight: [1,1,1,1,1]
         };
     }
     var add = action.type.split('_')
-    if(add[0] === 'incWeight'){
+    if(add[0] === 'incWeight')
+    {
         let idx = parseInt(add[1])
         let newW = state.weight
         newW[idx] = newW[idx]+1 > 10 ? 10:newW[idx]+1
@@ -60,7 +76,8 @@ const reducer = (state, action) => {
             ...state,
             weight: newW
         };
-    } else if (add[0] === 'decWeight'){
+    } 
+    else if (add[0] === 'decWeight'){
         let idx = parseInt(add[1])
         let newW = state.weight
         newW[idx] = newW[idx]-1 < 0 ? 0:newW[idx]-1
@@ -69,7 +86,8 @@ const reducer = (state, action) => {
             weight: newW
         };
         
-    } else if(add[0] === 'addRadar'){
+    } 
+    else if(add[0] === 'addRadar'){
         let college = add[1]
         let newR = state.inRadar
         newR.push(college)
@@ -77,7 +95,8 @@ const reducer = (state, action) => {
             ...state,
             inRadar: newR
         };
-    } else if(add[0] === 'rvmRadar'){
+    } 
+    else if(add[0] === 'rvmRadar'){
         let college = add[1]
         let newR = state.inRadar
         // 从newR中删除=college的元素
@@ -90,7 +109,8 @@ const reducer = (state, action) => {
             ...state,
             inRadar: newR
         };
-    } else if(add[0] === 'changeProvince'){
+    } 
+    else if(add[0] === 'changeProvince'){
         if (state.province === add[1])
         {
             return {
@@ -116,10 +136,10 @@ function StateProvider({children}) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
     useEffect(() => {
-        fetchCsvData('./data.csv')
+        fetchCsvData('./USA_data.csv')
           .then(res => {
               dispatch({
-                  type: 'init',
+                  type: 'Init',
                   payload: res
               })
           })

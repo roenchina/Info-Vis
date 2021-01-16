@@ -39,25 +39,23 @@ function AssistView() {
     const {state, dispatch} = useContext(store);
     const getOption = () => {
         var option = {
+            legend: {
+                type: 'scroll',
+                top: 15,
+                left: 10,
+                data:(function (){
+                    return state.inLine
+                })()
+            },
+
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'cross',
                     animation: false,
-                    label: {
-                        backgroundColor: '#ccc',
-                        borderColor: '#aaa',
-                        borderWidth: 1,
-                        shadowBlur: 0,
-                        shadowOffsetX: 0,
-                        shadowOffsetY: 0,
-                        color: '#222'
-                    }
                 },
-                // formatter: function (params) {
-                //     return params[2].name + '<br />' + ((params[2].value - base) * 100).toFixed(1) + '%';
-                // }
             },
+
             grid: {
                 left: '3%',
                 right: '4%',
@@ -66,34 +64,42 @@ function AssistView() {
             },
             xAxis: {
                 type: 'category',
-                data: [],   // TODO 横轴数据
-                // data.map(function (item) {
-                //     return item.date;
-                // }),
+                data: (function () {
+                    var res=[];
+                    var i;
+                    for(i=0; i<45; i++) {
+                        var month = i<15 ? '3' : '4';
+                        var day = i<15 ? i+18 : i-14;
+                        var date = '2020-' + month + "-" + day.toString(10);
+                        res.push(date);
+                    }
+                    return res;
+                })(),
                 axisLabel: {
-                    formatter: function (value, idx) {
-                        var date = new Date(idx);
-                        return idx;
+                    show: true,
+                    interval: 'auto',
+                    formatter: function (value, index) {
+                        // 格式化成月/日，只在第一个刻度显示年份
+                        var date = new Date(value);
+                        var texts = [(date.getMonth() + 1), date.getDate()];
+                        return texts.join('-');
                     }
                 },
+                axisPointer: [],
                 splitLine: {
                     show: false
                 },
-                boundaryGap: false
+                boundaryGap: false,
             },
 
             yAxis: {
                 axisLabel: {
-                    // formatter: function (val) {
-                    //     return (val - base) * 100 + '%';
-                    // }
                 },
                 axisPointer: {
-                    // label: {
-                    //     formatter: function (params) {
-                    //         return ((params.value - base) * 100).toFixed(1) + '%';
-                    //     }
-                    // }
+                    snap: true,
+                    label: {
+                        precision: 0,
+                    }
                 },
                 splitNumber: 3,
                 splitLine: {

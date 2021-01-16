@@ -112,9 +112,15 @@ const reducer = (state, action) => {
         };
     } 
     else if(add[0] === 'addState'){ // YRH 加入一个州
+        let newLine = state.inLine;  // YRH 更行折线图inLine变量
+        let i;
+        for(i=0; i<newLine.length; i++)
+            if(newLine[i] == add[1])
+                return {
+                    ...state,
+                };
 
-        let newLine = state.inLine  // YRH 更行折线图inLine变量
-        newLine.push(add[1])
+        newLine.push(add[1]);
         return {
             ...state,
             inLine: newLine

@@ -44,7 +44,7 @@ function convertData(state,mode,date) {
                 }   
             }
         }
-    console.log(res);
+    //console.log(res);
     return res;
 }
 
@@ -224,6 +224,10 @@ function MapView(){
                     show: 'true',
                     icon: 'roundRect',
                     data: ['USA confirmed cases','USA deaths'],
+                    selected: {
+                        'USA confirmed cases': function(){ return state.mode === "confirmed";}(),
+                        'USA deaths': function(){return state.mode === "deaths";}(),
+                    },
                     left: 'right',
                     top: '5%',
                     selectedMode:'single', // 设置为单选模式,或者是确诊,或者是死亡人数
@@ -290,7 +294,6 @@ function MapView(){
 
         'legendselectchanged': function(params) {   // YRH 点击legend改变mode
 
-            params.selected = true;
             if(params.name === 'USA deaths'){
                 console.log("death selected");
                 let action = 'changeMode_deaths';

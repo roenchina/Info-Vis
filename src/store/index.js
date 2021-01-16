@@ -11,7 +11,6 @@ const initialState = {
     inRadar: [],            // 雷达图中应该显示的学校名称
     province: null,
     date: 0,
-    mapview_mode: 0,
     mode: "confirmed",      // YRH 显示确诊或死亡
     inLine: [],             // YRH 折线图里面应该显示的州的名字
     data: [],
@@ -115,7 +114,7 @@ const reducer = (state, action) => {
         let newLine = state.inLine;  // YRH 更行折线图inLine变量
         let i;
         for(i=0; i<newLine.length; i++)
-            if(newLine[i] == add[1])
+            if(newLine[i] === add[1])
                 return {
                     ...state,
                 };

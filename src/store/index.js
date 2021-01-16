@@ -152,7 +152,7 @@ function StateProvider({children}) {
               })
           })
     }, [])
-
+    console.log("State: ", state)
     // 为子元素包裹上数据的上下文环境，方便所有子元素读取
     return <store.Provider value={{state, dispatch}}>
         {children}

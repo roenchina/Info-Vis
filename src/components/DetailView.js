@@ -6,38 +6,58 @@ import { ArrowBackSharp } from '@material-ui/icons';
 
 function convertData(state) {
     let res = [];
-    for(let i=0; i<state.inLine.length; i++) {   
-        let state_name = state.inLine[i];
-        state.data.forEach(function(item, index, arr){  
-            if(item.province_name === state_name){   
-                //遍历county
-                res.children = res.children || [];
-                var child = {
-                    name: item.county_name,
-                    value: item.confirmed_data
-                };
-                res.children.push(child);
-            }
-        })
-        //遍历state
-        res.push({
-            name: state_name,
-            children: res.children
-        })
+    // console.log("length of state: ", state.data.length);
+    var state_name_last = "";
+    // 遍历state
+    for(let i=0; i<state.data.length; i++) {   
+        //得到当前state
+        let state_name = state.data[i].province_name;
+        //与上一个state重复则跳过
+        if (state_name != state_name_last){
+            let state_children = [];
+            let state_value = 0;
+            //遍历state
+            state.data.forEach(function(item, index, arr){  
+                if(item.province_name === state_name){   
+                    //遍历该state下的county
+                    state_value += item.confirmed_4_30;
+                    var child = {
+                        name: item.county_name,
+                        value: item.confirmed_4_30
+                    };
+                    state_children.push(child);
+                }
+            })
+            // note 出来这个forEach循环之后，state_children里面已经包含所有child：{children: { [name: county_name, value: ], [], [], ...}}
+    
+            // note 构造完整的州的数据并push到res里面
+            res.push({
+                name: state_name,   // 州名
+                value: state_value,
+                children: state_children    // 州children
+            })
+            state_name_last = state_name;
+        }
     }
+    // note: 出来这个for循环之后，res里面已经包含每个州的数据
+    console.log("res:",res);
+    // return {
+    //     name: 'USA',
+    //     children: res
+    // };
     return res;
+
 }
 
 function DetailView() {
 
     const {state, dispatch} = useContext(store);
-
     const getOption = () => {     
         var option = {
 
             title: {
                 text: 'Treemap for COVID cases in USA',
-                subtext: '2020/02-2020/04',
+                subtext: 'up to 2020/04',
                 left: 'leafDepth'
             },
             tooltip: {},

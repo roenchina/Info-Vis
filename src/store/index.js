@@ -12,6 +12,8 @@ const initialState = {
     province: null,
     date: 0,
     mapview_mode: 0,
+    mode: "confirmed",      // YRH 显示确诊或死亡
+    inLine: [],             // YRH 折线图里面应该显示的州的名字
     data: [],
 };
 
@@ -27,7 +29,6 @@ const reducer = (state, action) => {
     else if(action.type === 'Init')
     {
         const payload = action.payload;
-        console.log("payload: ", payload)
         var newData = payload;
         newData.forEach(function(item, index, arr) {
             item.score = []
@@ -110,18 +111,20 @@ const reducer = (state, action) => {
             inRadar: newR
         };
     } 
-    else if(add[0] === 'changeProvince'){
-        if (state.province === add[1])
-        {
-            return {
-                ...state,
-                province: null               
-            }
-        }
-        return { // 更换为另一个省份
+    else if(add[0] === 'addState'){ // YRH 加入一个州
+
+        let newLine = state.inLine  // YRH 更行折线图inLine变量
+        newLine.push(add[1])
+        return {
             ...state,
-            province: add[1]
+            inLine: newLine
         };
+    }
+    else if(add[0] === 'changeMode'){
+        return {
+            ...state,
+            mode: add[1]
+        }
     }
     else
         throw new Error();

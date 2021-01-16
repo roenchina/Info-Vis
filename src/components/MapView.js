@@ -196,15 +196,32 @@ function MapView(){
         //     params.event.target.style.fill = '#d50000';
         // },
 
-        // 'click': function(params){ // 点击省份更换省份
-        //     if (params.componentType === 'geo'){
-        //         let action = 'changeProvince_' + params.name;
-        //         dispatch({type: action});
-        //     } else if (params.componentType === 'series') {
-        //         let action = 'addRadar_' + params.data.name;
-        //         dispatch({type: action}); 
-        //     }
-        // }
+        'click': function(params){ // YRH 点击省份更换省份
+            console.log("click");
+            console.log(params);
+            // 点击地图上的州，传给dispatch需要一个州的数据
+            if (params.componentType === 'series'){
+                let action = 'addState_' + params.name;
+                dispatch({type: action});
+            }
+            // else if (params.componentType === 'series') {
+            //     let action = 'addRadar_' + params.data.name;
+            //     dispatch({type: action}); 
+            // }
+        },
+
+        'legendselectchanged': function(params) {   // YRH 点击legend改变mode
+            if(params.name === 'USA deaths'){
+                console.log("death selected");
+                let action = 'changeMode_deaths';
+                dispatch({type: action});
+            }
+            else if (params.name === 'USA confirmed cases') {
+                console.log("death confirmed");
+                let action = 'changeMode_confirmed' + params.name;
+                dispatch({type: action});
+            }
+        }
     }
 
     return <ReactEcharts option={getOption()}

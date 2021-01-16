@@ -8,6 +8,7 @@ function convertData(state) {
     let res = [];
     // console.log("length of state: ", state.data.length);
     var state_name_last = "";
+    let date = state.date;
     // 遍历state
     for(let i=0; i<state.data.length-1; i++) {   
         //得到当前state
@@ -20,11 +21,11 @@ function convertData(state) {
             state.data.forEach(function(item, index, arr){  
                 if(item.province_name === state_name){   
                     //遍历该state下的county
-                    console.log(state.date);
-                    state_value += item.confirmed_4_30;
+                    //console.log(state.date);
+                    state_value += item.confirmed_data[date];
                     var child = {
                         name: item.county_name,
-                        value: item.confirmed_4_30
+                        value: item.confirmed_data[date]
                     };
                     state_children.push(child);
                 }

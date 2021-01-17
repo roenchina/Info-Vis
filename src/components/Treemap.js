@@ -20,7 +20,9 @@ function convertData(state) {
             state.data.forEach(function(item, index, arr){
                 if(item.province_name === state_name){
                     //遍历该state下的county
-                    county_value = (state.mode==='deaths' ? item.deaths_data[date] : item.confirmed_data[date]);
+                    if(state.mode === 'deaths' || state.mode === 'deathsRate')
+                        county_value = item.deaths_data[date]
+                    else county_value = item.confirmed_data[date];
                     state_value += county_value;
                     var child = {
                         name: item.county_name,
@@ -77,7 +79,7 @@ function DetailView() {
                       },
                       color: function(){
                             console.log(state.mode)
-                            if(state.mode === 'confirmed')
+                            if(state.mode === 'confirmed' || state.mode === "confirmedRate")
                                 return '#3182bd';
                             else return '#e6550d';
                         }(),

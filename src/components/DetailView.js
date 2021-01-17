@@ -17,15 +17,17 @@ function convertData(state) {
         if (state_name !== state_name_last){
             let state_children = [];
             let state_value = 0;
+            let county_value = 0;
             //遍历state
             state.data.forEach(function(item, index, arr){  
                 if(item.province_name === state_name){   
                     //遍历该state下的county
                     //console.log(state.date);
-                    state_value += item.confirmed_data[date];
+                    county_value = (state.mode==='deaths' ? item.deaths_data[date] : item.confirmed_data[date]);
+                    state_value += county_value;
                     var child = {
                         name: item.county_name,
-                        value: item.confirmed_data[date]
+                        value: county_value
                     };
                     state_children.push(child);
                 }
@@ -59,8 +61,10 @@ function DetailView() {
 
             title: {
                 text: 'Treemap for COVID cases in USA',
-                subtext: 'up to 2020/04',
-                left: 'leafDepth'
+                subtext: '2020/3/18 to 4/30',
+                subtextStyle:{fontSize: '15'},
+                left: 'left',
+                top:'3%'
             },
             tooltip: {},
             series: [{
@@ -69,6 +73,14 @@ function DetailView() {
                 visibleMin: 500,
                 data: convertData(state),
                 leafDepth: 3,
+                breadcrumb: {
+                    height: 30,
+                    itemStyle: {
+                      textStyle: {
+                        fontSize: 25
+                      }
+                    }
+                },
                 levels: [
                     {
                         itemStyle: {

@@ -22,10 +22,8 @@ function convertData(state) {
                     //遍历该state下的county
                     if(state.mode === 'deaths')
                         county_value = item.deaths_data[date];
-                    else if (state.mode === 'deathsRate')
-                        county_value = item.deaths_4_30;
-                    else if (state.mode == 'confirmedRate')
-                        county_value = item.confirmed_4_30;
+                    else if (state.mode === 'deathsRate' || state.mode == 'confirmedRate')
+                        county_value = item.Population;
                     else county_value = item.confirmed_data[date];
                     state_value += county_value;
                     var child = {
@@ -59,7 +57,7 @@ function DetailView() {
                 subtext: function(){
                     //'2020/3/18 to 4/30'
                     if(state.mode === "confirmedRate" || state.mode === "deathsRate")
-                        return 'up to 4/30';
+                        return 'Population';
                     if(state.date<14)
                         return  '2020/3/' + (state.date+18).toString();
                     return  '2020/4/' + (state.date-13).toString();

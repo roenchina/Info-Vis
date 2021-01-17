@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     view: {
         border: '1px solid black',
         borderRadius: '5px',
-        boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+        boxShadow: '0 3px 5px 2px rgba(0, 0, 0, .3)',
         padding: '0 30px',
         background: '#FFFFFF',
     },

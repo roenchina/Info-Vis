@@ -33,11 +33,29 @@ function convertData(state) {
                     state_children.push(child);
                 }
             })
-            res.push({
+            //console.log(stae.clickone[0])
+            if(state.clickone.length > 0 && state.clickone === state_name){ // 被点击的省高亮
+                res.push(
+                {
+                    name: state_name,   // 州名
+                    value: state_value,
+                    children: state_children,    // 州children
+                    itemStyle: {
+                        borderColor: '#ddd'
+                    },
+                    upperLabel: {
+                        position: 'inside',
+                        color:'#000',
+                        fontWeight:'bold'
+                    }
+                })
+            }
+            else{
+                res.push({
                 name: state_name,   // 州名
                 value: state_value,
                 children: state_children    // 州children
-            })
+            })}   
             state_name_last = state_name;
         }
     }

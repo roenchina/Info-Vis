@@ -4,23 +4,37 @@ import ReactEcharts from "echarts-for-react";
 
 function convertData(state) {
     let res = [];
-
+    console.log("-------------------");
+    console.log(state);
     for(let i=0; i<state.inLine.length; i++) {   // YRH 对每一个需要加入的省份
         let state_name = state.inLine[i];
-
         let this_state_data = new Array(45).fill(0);
+        let tot_population = 0;
 
         state.data.forEach(function(item, index, arr){  // YRH 遍历所有数据列表
             if(item.province_name === state_name){   // YRH 如果为当前省份的某数据列表
-
                 let former = this_state_data;
-                let to_add = (state.mode==='deaths' ? item.deaths_data : item.confirmed_data);
+                let to_add = [];
+
+                if(state.mode === 'deaths' || state.mode === 'deathsRate')
+                    to_add = item.deaths_data;
+                else if (state.mode === 'confirmed' || state.mode === 'confirmedRate')
+                    to_add = item.confirmed_data;
+
+                tot_population += item.Population;
+                
                 former.forEach(function(v, index){
                     this_state_data[index] = v + to_add[index];
                 })
             }
         })
-        
+
+        if (state.mode === 'deathsRate' || state.mode === 'confirmedRate')
+            this_state_data.forEach(function(v, index){
+                this_state_data[index] = v / tot_population
+            })
+
+
         // 每个county的都加完了，push到res里面
         res.push({
             name: state_name,

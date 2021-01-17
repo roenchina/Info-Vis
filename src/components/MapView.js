@@ -233,8 +233,12 @@ function MapView(){
                         var temp = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
                         if(state.mode === 'confirmed' || state.mode === 'deaths'||(value[1] === undefined))
                             return params.seriesName + '<br/>' + params.name + ': ' + temp;
-                        else
-                            return params.seriesName + '<br/>' + params.name + ': ' + temp +'.' + value[1].substring(0,3); 
+                        else if(state.mode === 'confirmedRate')
+                            return params.seriesName + '<br/>' + params.name + ': ' 
+                            + temp +'.' + value[1].substring(0,3) + '‰';
+                        else if(state.mode === 'deathsRate')
+                            return params.seriesName + '<br/>' + params.name + ': ' 
+                            + temp +'.' + value[1].substring(0,3) + '‱'; 
                     },
                     textStyle:{
                         fontWeight:'bold',

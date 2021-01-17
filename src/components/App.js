@@ -3,8 +3,8 @@
 import React from 'react';
 import clsx from "clsx";
 import {makeStyles} from "@material-ui/core";
-import AssistView from "./AssistView";
-import DetailView from "./DetailView";
+import LineChart from "./LineChart";
+import Treemap from "./Treemap";
 import MapView from "./MapView";
 
 // 这是JSS的写法，相当于声明了一些css的类
@@ -23,14 +23,14 @@ const useStyles = makeStyles(theme => ({
         padding: '0 30px',
         background: '#FFFFFF',
     },
-    detailView: {
+    Treemap: {
         position: 'absolute',
         top: 20,
         left: 950,
         bottom: 50,
         width: 700,
     },
-    assistView: {
+    LineChart: {
         position: 'absolute',
         top: 20,
         height: 230,
@@ -55,9 +55,8 @@ function App() {
     // 可视化项目中，若干视图一般采用绝对布局，方便后续调整各个视图的位置与大小
     return(
         <div className={classes.root}>
-            {/* <div className={clsx(classes.view, classes.controlPanel)}><ControlPanel/></div> */}
-            <div className={clsx(classes.view, classes.detailView)}><DetailView/></div>  
-            <div className={clsx(classes.view, classes.assistView)}><AssistView/></div>
+            <div className={clsx(classes.view, classes.Treemap)}><Treemap/></div>  
+            <div className={clsx(classes.view, classes.LineChart)}><LineChart/></div>
             <div className={clsx(classes.view, classes.mapView)}><MapView/></div>
         </div>
     );

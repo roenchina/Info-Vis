@@ -61,7 +61,12 @@ function DetailView() {
 
             title: {
                 text: 'Treemap for COVID cases in USA',
-                subtext: '2020/3/18 to 4/30',
+                subtext: function(){
+                    //'2020/3/18 to 4/30'
+                    if(state.date<14)
+                        return  '2020/3/' + (state.date+18).toString();
+                    return  '2020/3/' + (state.date-13).toString();
+                }(),
                 subtextStyle:{fontSize: '15'},
                 left: 'left',
                 top:'3%'
@@ -74,11 +79,21 @@ function DetailView() {
                 data: convertData(state),
                 leafDepth: 3,
                 breadcrumb: {
-                    height: 30,
+                    height: 35,
+                    top : 'bottom',
                     itemStyle: {
                       textStyle: {
-                        fontSize: 25
-                      }
+                        fontSize: 18,
+                        verticalAlign: 'bottom',
+                      },
+                      color: function(){
+                            console.log(state.mode)
+                            if(state.mode === 'confirmed')
+                                return '#3182bd';
+                            else return '#e6550d';
+                        }(),
+                      borderColor:'#bdbdbd',
+                      borderWidth:1.5
                     }
                 },
                 levels: [

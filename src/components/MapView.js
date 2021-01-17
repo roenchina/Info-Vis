@@ -301,7 +301,7 @@ function MapView(){
             }
             else if (params.name === 'USA confirmed cases') {
                 console.log("death confirmed");
-                let action = 'changeMode_confirmed' + params.name;
+                let action = 'changeMode_confirmed';
                 dispatch({type: action});
             }
         },

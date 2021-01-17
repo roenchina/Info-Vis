@@ -58,6 +58,8 @@ function DetailView() {
                 text: 'Treemap for COVID cases in USA',
                 subtext: function(){
                     //'2020/3/18 to 4/30'
+                    if(state.mode === "confirmedRate" || state.mode === "deathsRate")
+                        return 'up to 4/30';
                     if(state.date<14)
                         return  '2020/3/' + (state.date+18).toString();
                     return  '2020/4/' + (state.date-13).toString();

@@ -196,8 +196,8 @@ function MapView(){
                 visualMap: [
                 {
                     type: 'continuous',
-                    left: '82%',
-                    top:'50%',
+                    left: '80%',
+                    top:'53%',
                     seriesIndex:0,
                     inRange: {
                     color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
@@ -211,7 +211,7 @@ function MapView(){
                 {
                     type: 'continuous',
                     left: 'right',
-                    top:'50%',
+                    top:'53%',
                     seriesIndex:1,
                     inRange: {
                     color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
@@ -246,7 +246,7 @@ function MapView(){
                         map:'USA',
                         name: 'USA confirmed cases',
                         showLegendSymbol:false,
-                        layoutCenter: ['45%', '55%'],
+                        layoutCenter: ['43%', '55%'],
                         layoutSize: 700,
                         roam: true,
                         scaleLimit:{min:0.6,max:5},

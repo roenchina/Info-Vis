@@ -16,6 +16,7 @@ function convertData(state,mode,date) {
     let temp={};
     temp.name = data[0].province_name;
     temp.value = 0;
+    temp.population = 0;
     if(mode === 0){ // confirmed_data
         for (let i = 0; i < data.length; i++) {
         if(data[i].province_name === temp.name)
@@ -30,7 +31,7 @@ function convertData(state,mode,date) {
             }   
         }
     }
-    else{ // deaths_data
+    else if(mode === 1){ // confirmed_deaths_data
         for (let i = 0; i < data.length; i++) {
             if(data[i].province_name === temp.name)
                 temp.value += data[i].deaths_data[date];
@@ -44,7 +45,44 @@ function convertData(state,mode,date) {
                 }   
             }
         }
-    //console.log(res);
+    else if(mode === 2){ // confirmed_rate
+            for (let i = 0; i < data.length; i++) {
+            if(data[i].province_name === temp.name)
+            {
+                temp.value += data[i].confirmed_data[date];
+                temp.population += data[i].Population;
+            }
+            else{
+                res.push({
+                    name: temp.name,
+                    value: temp.value*1000/temp.population,
+                });
+                temp.name = data[i].province_name;
+                temp.value = data[i].confirmed_data[date];
+                temp.population = data[i].Population;
+                }   
+            }
+        //console.log(res);
+        }
+    else if(mode === 3){ // confirmed_deaths_rate
+            for (let i = 0; i < data.length; i++) {
+                if(data[i].province_name === temp.name)
+                {
+                    temp.value += data[i].deaths_data[date];
+                    temp.population += data[i].Population;
+                }
+                else{
+                    res.push({
+                        name: temp.name,
+                        value: temp.value*10000/temp.population,
+                    });
+                    temp.name = data[i].province_name;
+                    temp.value = data[i].deaths_data[date];
+                    temp.population = data[i].Population;
+                    }   
+                }
+                //console.log(res);
+        }
     return res;
 }
 
@@ -58,14 +96,23 @@ function LoadFullData(state) {
     for (let i = 0; i < data[0].confirmed_data.length-1; i++)
     {
         let name = '';
-        if(i<14)
-            name = 'USA confirmed cases and deaths (2020-3-' + (i+18).toString() + ')';
-        else
-            name = 'USA confirmed cases and deaths (2020-4-' + (i-13).toString() + ')';
+        if(state.mode === 'confirmed' || state.mode === 'deaths'){
+            if(i<14)
+                name = 'USA confirmed cases and deaths (2020-3-' + (i+18).toString() + ')';
+            else
+                name = 'USA confirmed cases and deaths (2020-4-' + (i-13).toString() + ')';
+        }
+        else{
+            if(i<14)
+                name = 'USA confirmed rate and death rate (2020-3-' + (i+18).toString() + ')';
+            else
+                name = 'USA confirmed rate and death rate (2020-4-' + (i-13).toString() + ')';
+        }
         FullData.push(
         {
             title: { text: name},
-            series: [{data:convertData(state,0,i)},{data:convertData(state,1,i)},]
+            series: [{data:convertData(state,0,i)},{data:convertData(state,1,i)},
+                    {data:convertData(state,2,i)},{data:convertData(state,3,i)}]
         } 
         )
     }
@@ -183,8 +230,11 @@ function MapView(){
                     enterable: true,
                     formatter: function (params) {
                         var value = (params.value + '').split('.');
-                        value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
-                        return params.seriesName + '<br/>' + params.name + ': ' + value;
+                        var temp = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
+                        if(state.mode === 'confirmed' || state.mode === 'deaths'||(value[1] === undefined))
+                            return params.seriesName + '<br/>' + params.name + ': ' + temp;
+                        else
+                            return params.seriesName + '<br/>' + params.name + ': ' + temp +'.' + value[1].substring(0,3); 
                     },
                     textStyle:{
                         fontWeight:'bold',
@@ -196,9 +246,10 @@ function MapView(){
                 visualMap: [
                 {
                     type: 'continuous',
-                    left: '80%',
+                    left: 'right',
                     top:'53%',
                     seriesIndex:0,
+                    show: function(){ return state.mode === "confirmed";}(),
                     inRange: {
                     color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
                     },
@@ -213,6 +264,7 @@ function MapView(){
                     left: 'right',
                     top:'53%',
                     seriesIndex:1,
+                    show: function(){ return state.mode === "deaths";}(),
                     inRange: {
                     color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
                     },
@@ -221,16 +273,51 @@ function MapView(){
                     text: ['High', 'Low'],           // 文本，默认为数值文本
                     calculable: true,
                     hoverLink:true
+                },
+                {
+                    type: 'continuous',
+                    left: 'right',
+                    top:'53%',
+                    seriesIndex:2,
+                    precision:3,
+                    show: function(){ return state.mode === "confirmedRate";}(),
+                    inRange: {
+                    color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
+                    },
+                    min:0,
+                    max:5,
+                    text: ['High (‰)', 'Low (‰)'],           // 文本，默认为数值文本
+                    calculable: true,
+                    hoverLink:true
+                },
+                {
+                    type: 'continuous',
+                    left: 'right',
+                    top:'53%',
+                    seriesIndex:3,
+                    precision:3,
+                    show: function(){return state.mode === "deathsRate";}(),
+                    inRange: {
+                    color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
+                    },
+                    min:0,
+                    max:1,
+                    text: ['High (‱)', 'Low (‱)'],           // 文本，默认为数值文本
+                    calculable: true,
+                    hoverLink:true
                 }
                 ],
-                color:['#08519c','#bd0026'], // 图例的颜色
+                color:['#08519c','#bd0026','#08519c','#bd0026'], // 图例的颜色
                 legend: {
                     show: 'true',
                     icon: 'roundRect',
-                    data: ['USA confirmed cases','USA deaths'],
+                    orient : 'vertical',
+                    data: ['USA confirmed cases','USA deaths','USA confirmed rate','USA deaths rate'],
                     selected: {
                         'USA confirmed cases': function(){ return state.mode === "confirmed";}(),
                         'USA deaths': function(){return state.mode === "deaths";}(),
+                        'USA confirmed rate': function(){ return state.mode === "confirmedRate";}(),
+                        'USA deaths rate': function(){return state.mode === "deathsRate";}(),
                     },
                     left: 'right',
                     top: '5%',
@@ -285,6 +372,50 @@ function MapView(){
                             }
                         },
                     },
+                    {
+                        type: 'map',
+                        map:'USA',
+                        name: 'USA confirmed rate',
+                        showLegendSymbol:false,
+                        layoutCenter: ['43%', '55%'],
+                        layoutSize: 700,
+                        roam: true,
+                        scaleLimit:{min:0.6,max:5},
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                color: '#111',
+                            },
+                            itemStyle: {
+                                areaColor: '#FFF3B0',
+                                borderWidth: 1.5,
+                                borderColor: '#333',
+                            }
+                        },
+                    },
+                    {
+                        type: 'map',
+                        map:'USA',
+                        name:'USA deaths rate',
+                        showLegendSymbol:false,
+                        layoutCenter: ['45%', '55%'],
+                        layoutSize: 700,
+                        roam: true,
+                        scaleLimit:{min:0.6,max:5},
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                color: '#111',
+                            },
+                            itemStyle: {
+                                areaColor: '#E9FAFF',
+                                borderWidth: 1.5,
+                                borderColor: '#333',
+                            }
+                        },
+                    },
                 ]
             },
             options:LoadFullData(state)
@@ -306,13 +437,19 @@ function MapView(){
         'legendselectchanged': function(params) {   // YRH 点击legend改变mode
 
             if(params.name === 'USA deaths'){
-                console.log("death selected");
                 let action = 'changeMode_deaths';
                 dispatch({type: action});
             }
             else if (params.name === 'USA confirmed cases') {
-                console.log("death confirmed");
                 let action = 'changeMode_confirmed';
+                dispatch({type: action});
+            }
+            else if (params.name === 'USA confirmed rate') {
+                let action = 'changeMode_confirmedRate';
+                dispatch({type: action});
+            }
+            else if (params.name === 'USA deaths rate') {
+                let action = 'changeMode_deathsRate';
                 dispatch({type: action});
             }
         },

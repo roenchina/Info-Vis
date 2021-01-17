@@ -66,23 +66,38 @@ function DetailView() {
             series: [{
                 name: 'USA',
                 type: 'treemap',
-                visibleMin: 300,
+                visibleMin: 500,
                 data: convertData(state),
-                leafDepth: 2,
+                leafDepth: 3,
                 levels: [
                     {
                         itemStyle: {
-                            borderColor: '#555',
-                            borderWidth: 4,
-                            gapWidth: 4
+                            borderColor: '#777',
+                            borderWidth: 0,
+                            gapWidth: 3
                         }
                     },
                     {
                         colorSaturation: [0.3, 0.6],
                         itemStyle: {
-                            borderColorSaturation: 0.7,
-                            gapWidth: 2,
-                            borderWidth: 2
+                            borderColor: '#555',
+                            borderWidth: 4,
+                            gapWidth: 3
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                borderColor: '#ddd'
+                            },
+                            upperLabel: {
+                                position: 'inside',
+                                color:'#000',
+                                fontWeight:'bold'
+                            }
+                        },
+                        upperLabel: {
+                            show: true,
+                            position: 'inside',
+                            fontSize: 12
                         }
                     },
                     {

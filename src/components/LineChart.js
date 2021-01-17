@@ -29,11 +29,14 @@ function convertData(state) {
             }
         })
 
-        if (state.mode === 'deathsRate' || state.mode === 'confirmedRate')
+        if (state.mode === 'deathsRate'){
             this_state_data.forEach(function(v, index){
-                this_state_data[index] = v / tot_population
-            })
-
+                this_state_data[index] = (v / tot_population).toFixed(3)
+            })}
+        else if(state.mode === 'confirmedRate'){
+            this_state_data.forEach(function(v, index){
+                this_state_data[index] = (v / tot_population).toFixed(3)
+            })}
 
         // 每个county的都加完了，push到res里面
         res.push({
@@ -63,7 +66,7 @@ function AssistView() {
                 axisPointer: {
                     type: 'cross',
                     animation: false,
-                },
+                }
             },
 
             grid: {
@@ -107,7 +110,11 @@ function AssistView() {
                 axisPointer: {
                     snap: true,
                     label: {
-                        precision: 0,
+                        precision: function(){
+                            if(state.mode === 'deaths' || state.mode === 'confirmed')
+                                return 0;
+                            return 3;
+                        }(),
                     }
                 },
                 splitNumber: 3,

@@ -10,7 +10,7 @@ import MapView from "./MapView";
 // 这是JSS的写法，相当于声明了一些css的类
 const useStyles = makeStyles(theme => ({
     root: {
-        background: 'linear-gradient(45deg, #DDDDDD 30%, #FF8E53 90%)',
+        background: 'linear-gradient(35deg, #deebf7 30%, #3182bd 95%)',
         position: 'relative',
         width: '100vw',
         height: '100vh',

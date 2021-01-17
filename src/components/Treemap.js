@@ -79,7 +79,7 @@ function DetailView() {
                       },
                       color: function(){
                             console.log(state.mode)
-                            if(state.mode === 'confirmed')
+                            if(state.mode === 'confirmed' || state.mode === "confirmedRate")
                                 return '#3182bd';
                             else return '#e6550d';
                         }(),

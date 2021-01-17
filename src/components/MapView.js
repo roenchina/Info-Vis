@@ -111,8 +111,8 @@ function LoadFullData(state) {
         FullData.push(
         {
             title: { text: name},
-            series: [{data:convertData(state,0,i)},{data:convertData(state,1,i)},
-                    {data:convertData(state,2,i)},{data:convertData(state,3,i)}]
+            series: [{data:convertData(state,0,i)},{data:convertData(state,2,i)},
+                    {data:convertData(state,1,i)},{data:convertData(state,3,i)}]
         } 
         )
     }
@@ -233,8 +233,12 @@ function MapView(){
                         var temp = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
                         if(state.mode === 'confirmed' || state.mode === 'deaths'||(value[1] === undefined))
                             return params.seriesName + '<br/>' + params.name + ': ' + temp;
-                        else
-                            return params.seriesName + '<br/>' + params.name + ': ' + temp +'.' + value[1].substring(0,3); 
+                        else if(state.mode === 'confirmedRate')
+                            return params.seriesName + '<br/>' + params.name + ': ' 
+                            + temp +'.' + value[1].substring(0,3) + '‰';
+                        else if(state.mode === 'deathsRate')
+                            return params.seriesName + '<br/>' + params.name + ': ' 
+                            + temp +'.' + value[1].substring(0,3) + '‱'; 
                     },
                     textStyle:{
                         fontWeight:'bold',
@@ -263,7 +267,7 @@ function MapView(){
                     type: 'continuous',
                     left: 'right',
                     top:'53%',
-                    seriesIndex:1,
+                    seriesIndex:2,
                     show: function(){ return state.mode === "deaths";}(),
                     inRange: {
                     color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
@@ -278,7 +282,7 @@ function MapView(){
                     type: 'continuous',
                     left: 'right',
                     top:'53%',
-                    seriesIndex:2,
+                    seriesIndex:1,
                     precision:3,
                     show: function(){ return state.mode === "confirmedRate";}(),
                     inRange: {
@@ -307,16 +311,16 @@ function MapView(){
                     hoverLink:true
                 }
                 ],
-                color:['#08519c','#bd0026','#08519c','#bd0026'], // 图例的颜色
+                color:['#08519c','#08519c','#bd0026','#bd0026'], // 图例的颜色
                 legend: {
                     show: 'true',
                     icon: 'roundRect',
                     orient : 'vertical',
-                    data: ['USA confirmed cases','USA deaths','USA confirmed rate','USA deaths rate'],
+                    data: ['USA confirmed cases','USA confirmed rate','USA deaths','USA deaths rate'],
                     selected: {
                         'USA confirmed cases': function(){ return state.mode === "confirmed";}(),
-                        'USA deaths': function(){return state.mode === "deaths";}(),
                         'USA confirmed rate': function(){ return state.mode === "confirmedRate";}(),
+                        'USA deaths': function(){return state.mode === "deaths";}(),
                         'USA deaths rate': function(){return state.mode === "deathsRate";}(),
                     },
                     left: 'right',
@@ -353,28 +357,6 @@ function MapView(){
                     {
                         type: 'map',
                         map:'USA',
-                        name:'USA deaths',
-                        showLegendSymbol:false,
-                        layoutCenter: ['45%', '55%'],
-                        layoutSize: 700,
-                        roam: true,
-                        scaleLimit:{min:0.6,max:5},
-                        emphasis: {
-                            label: {
-                                show: true,
-                                fontSize: 16,
-                                color: '#111',
-                            },
-                            itemStyle: {
-                                areaColor: '#E9FAFF',
-                                borderWidth: 1.5,
-                                borderColor: '#333',
-                            }
-                        },
-                    },
-                    {
-                        type: 'map',
-                        map:'USA',
                         name: 'USA confirmed rate',
                         showLegendSymbol:false,
                         layoutCenter: ['43%', '55%'],
@@ -389,6 +371,28 @@ function MapView(){
                             },
                             itemStyle: {
                                 areaColor: '#FFF3B0',
+                                borderWidth: 1.5,
+                                borderColor: '#333',
+                            }
+                        },
+                    },
+                    {
+                        type: 'map',
+                        map:'USA',
+                        name:'USA deaths',
+                        showLegendSymbol:false,
+                        layoutCenter: ['45%', '55%'],
+                        layoutSize: 700,
+                        roam: true,
+                        scaleLimit:{min:0.6,max:5},
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                color: '#111',
+                            },
+                            itemStyle: {
+                                areaColor: '#E9FAFF',
                                 borderWidth: 1.5,
                                 borderColor: '#333',
                             }

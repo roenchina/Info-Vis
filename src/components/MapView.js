@@ -77,12 +77,12 @@ function MapView(){
     const {state, dispatch} = useContext(store);
     echarts.registerMap('USA', usaJson, {
         // 部分区域调整位置
-        Alaska: {              // 阿拉斯加
+        'Alaska': {              // 阿拉斯加
             left: -140,
             top: 23,
             width: 25
         },
-        Hawaii: {
+        'Hawaii': {
             left: -110,        // 夏威夷
             top: 22,
             width: 10

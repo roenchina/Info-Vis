@@ -1,13 +1,11 @@
-// 本文件是界面UI的根目录
-
 import React from 'react';
 import clsx from "clsx";
 import {makeStyles} from "@material-ui/core";
+
 import LineChart from "./LineChart";
 import Treemap from "./Treemap";
 import MapView from "./MapView";
 
-// 这是JSS的写法，相当于声明了一些css的类
 const useStyles = makeStyles(theme => ({
     root: {
         background: 'linear-gradient(35deg, #deebf7 30%, #3182bd 95%)',
@@ -46,13 +44,8 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
-// App组件
 function App() {
-    // 使用上述的css样式
     const classes = useStyles();
-
-    // 使用classes.root使用样式中定义的root类
-    // 可视化项目中，若干视图一般采用绝对布局，方便后续调整各个视图的位置与大小
     return(
         <div className={classes.root}>
             <div className={clsx(classes.view, classes.Treemap)}><Treemap/></div>  

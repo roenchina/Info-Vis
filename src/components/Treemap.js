@@ -2,11 +2,9 @@
 import React, {useContext} from 'react';
 import ReactEcharts from 'echarts-for-react';
 import {store} from "../store";
-import { ArrowBackSharp } from '@material-ui/icons';
 
 function convertData(state) {
     let res = [];
-    // console.log("length of state: ", state.data.length);
     var state_name_last = "";
     let date = state.date;
     // 遍历state
@@ -19,10 +17,9 @@ function convertData(state) {
             let state_value = 0;
             let county_value = 0;
             //遍历state
-            state.data.forEach(function(item, index, arr){  
-                if(item.province_name === state_name){   
+            state.data.forEach(function(item, index, arr){
+                if(item.province_name === state_name){
                     //遍历该state下的county
-                    //console.log(state.date);
                     county_value = (state.mode==='deaths' ? item.deaths_data[date] : item.confirmed_data[date]);
                     state_value += county_value;
                     var child = {
@@ -32,9 +29,6 @@ function convertData(state) {
                     state_children.push(child);
                 }
             })
-            // note 出来这个forEach循环之后，state_children里面已经包含所有child：{children: { [name: county_name, value: ], [], [], ...}}
-    
-            // note 构造完整的州的数据并push到res里面
             res.push({
                 name: state_name,   // 州名
                 value: state_value,
@@ -43,12 +37,7 @@ function convertData(state) {
             state_name_last = state_name;
         }
     }
-    // note: 出来这个for循环之后，res里面已经包含每个州的数据
     console.log("res:",res);
-    // return {
-    //     name: 'USA',
-    //     children: res
-    // };
     return res;
 
 }

@@ -1,5 +1,3 @@
-// 本文件是一个子视图
-
 import React, {useContext} from 'react';
 import {store} from "../store";
 import ReactEcharts from "echarts-for-react";
@@ -30,12 +28,10 @@ function convertData(state) {
             data: this_state_data,  // YRH 是一个30天的数组
         });
     }
-    //console.log(res);
     return res;
 }
 
 function AssistView() {
-    // 使用StateProvider提供的数据环境
     const {state, dispatch} = useContext(store);
     const getOption = () => {
         var option = {
@@ -79,7 +75,6 @@ function AssistView() {
                     show: true,
                     interval: 'auto',
                     formatter: function (value, index) {
-                        // 格式化成月/日，只在第一个刻度显示年份
                         var date = new Date(value);
                         var texts = [(date.getMonth() + 1), date.getDate()];
                         return texts.join('-');

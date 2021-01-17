@@ -203,7 +203,7 @@ function MapView(){
                     color: ['#f7fbff','#deebf7','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#08519c','#08306b']
                     },
                     min:0,
-                    max:3000,
+                    max:10000,
                     text: ['High', 'Low'],           // 文本，默认为数值文本
                     calculable: true,
                     hoverLink:true
@@ -217,7 +217,7 @@ function MapView(){
                     color: ['#ffffcc','#ffeda0','#fed976','#feb24c','#fd8d3c','#fc4e2a','#e31a1c','#bd0026','#800026']
                     },
                     min:0,
-                    max:200,
+                    max:500,
                     text: ['High', 'Low'],           // 文本，默认为数值文本
                     calculable: true,
                     hoverLink:true
@@ -238,7 +238,6 @@ function MapView(){
                     textStyle:{
                         fontWeight:'bold',
                         fontSize: 14,
-
                     }
                 },
                 series: [
@@ -254,7 +253,13 @@ function MapView(){
                         emphasis: {
                             label: {
                                 show: true,
-                                fontSize:18,
+                                fontSize: 16,
+                                color: '#111',
+                            },
+                            itemStyle: {
+                                areaColor: '#FFF3B0',
+                                borderWidth: 1.5,
+                                borderColor: '#333',
                             }
                         },
                     },
@@ -270,7 +275,13 @@ function MapView(){
                         emphasis: {
                             label: {
                                 show: true,
-                                fontSize:18,
+                                fontSize: 16,
+                                color: '#111',
+                            },
+                            itemStyle: {
+                                areaColor: '#E9FAFF',
+                                borderWidth: 1.5,
+                                borderColor: '#333',
                             }
                         },
                     },

@@ -20,8 +20,12 @@ function convertData(state) {
             state.data.forEach(function(item, index, arr){
                 if(item.province_name === state_name){
                     //遍历该state下的county
-                    if(state.mode === 'deaths' || state.mode === 'deathsRate')
-                        county_value = item.deaths_data[date]
+                    if(state.mode === 'deaths')
+                        county_value = item.deaths_data[date];
+                    else if (state.mode === 'deathsRate')
+                        county_value = item.deaths_4_30;
+                    else if (state.mode == 'confirmedRate')
+                        county_value = item.confirmed_4_30;
                     else county_value = item.confirmed_data[date];
                     state_value += county_value;
                     var child = {

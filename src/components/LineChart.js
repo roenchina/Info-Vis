@@ -4,8 +4,6 @@ import ReactEcharts from "echarts-for-react";
 
 function convertData(state) {
     let res = [];
-    console.log("-------------------");
-    console.log(state);
     for(let i=0; i<state.inLine.length; i++) {   // YRH 对每一个需要加入的省份
         let state_name = state.inLine[i];
         let this_state_data = new Array(45).fill(0);
@@ -72,6 +70,7 @@ function AssistView() {
                 bottom: '40%',
                 containLabel: true
             },
+
             xAxis: {
                 type: 'category',
                 data: (function () {
@@ -107,7 +106,7 @@ function AssistView() {
                 axisPointer: {
                     snap: true,
                     label: {
-                        precision: 0,
+                        precision: (state.mode==='deaths' || state.mode==='confirmed') ? 0 : 4,
                     }
                 },
                 splitNumber: 3,
@@ -115,6 +114,7 @@ function AssistView() {
                     show: false
                 }
             },
+            
             series: convertData(state)
         };
         return option

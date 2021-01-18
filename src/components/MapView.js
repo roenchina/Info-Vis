@@ -290,7 +290,7 @@ function MapView(){
                     },
                     min:0,
                     max:5,
-                    text: ['High (‰)', 'Low (‰)'],           // 文本，默认为数值文本
+                    text: ['High(‰)', 'Low(‰)'],           // 文本，默认为数值文本
                     calculable: true,
                     hoverLink:true
                 },
@@ -306,7 +306,7 @@ function MapView(){
                     },
                     min:0,
                     max:1,
-                    text: ['High (‱)', 'Low (‱)'],           // 文本，默认为数值文本
+                    text: ['High(‱)', 'Low(‱)'],           // 文本，默认为数值文本
                     calculable: true,
                     hoverLink:true
                 }

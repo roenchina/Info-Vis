@@ -20,8 +20,10 @@ function convertData(state) {
             state.data.forEach(function(item, index, arr){
                 if(item.province_name === state_name){
                     //遍历该state下的county
-                    if(state.mode === 'deaths' || state.mode === 'deathsRate')
-                        county_value = item.deaths_data[date]
+                    if(state.mode === 'deaths')
+                        county_value = item.deaths_data[date];
+                    else if (state.mode === 'deathsRate' || state.mode == 'confirmedRate')
+                        county_value = item.Population;
                     else county_value = item.confirmed_data[date];
                     state_value += county_value;
                     var child = {
@@ -31,11 +33,29 @@ function convertData(state) {
                     state_children.push(child);
                 }
             })
-            res.push({
+            //console.log(stae.clickone[0])
+            if(state.clickone.length > 0 && state.clickone === state_name){ // 被点击的省高亮
+                res.push(
+                {
+                    name: state_name,   // 州名
+                    value: state_value,
+                    children: state_children,    // 州children
+                    itemStyle: {
+                        borderColor: '#ddd'
+                    },
+                    upperLabel: {
+                        position: 'inside',
+                        color:'#000',
+                        fontWeight:'bold'
+                    }
+                })
+            }
+            else{
+                res.push({
                 name: state_name,   // 州名
                 value: state_value,
                 children: state_children    // 州children
-            })
+            })}   
             state_name_last = state_name;
         }
     }
@@ -54,6 +74,8 @@ function DetailView() {
                 text: 'Treemap for COVID cases in USA',
                 subtext: function(){
                     //'2020/3/18 to 4/30'
+                    if(state.mode === "confirmedRate" || state.mode === "deathsRate")
+                        return 'Population';
                     if(state.date<14)
                         return  '2020/3/' + (state.date+18).toString();
                     return  '2020/4/' + (state.date-13).toString();

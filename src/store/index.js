@@ -6,6 +6,7 @@ const initialState = {
     time_play:false,
     mode: "confirmed",      // YRH 显示确诊或死亡
     inLine: [],             // YRH 折线图里面应该显示的州的名字
+    clickone:[],            // 最近一次点击的省份
     data: [],
 };
 
@@ -41,11 +42,13 @@ const reducer = (state, action) => {
             if(newLine[i] === keyword[1])
                 return {
                     ...state,
+                    clickone: keyword[1]
                 };
         newLine.push(keyword[1]);
         return {
             ...state,
-            inLine: newLine
+            inLine: newLine,
+            clickone: keyword[1]
         };
     }
     else if(keyword[0] === 'changeMode'){

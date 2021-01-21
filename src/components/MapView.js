@@ -459,9 +459,6 @@ function MapView(){
         },
 
         'timelinechanged': function(params) {   // 时间轴刷新
-            
-            //console.log(params);
-            //console.log('change the date:' + params.currentIndex.toString());
             let action = 'changeDate_' + params.currentIndex;
             dispatch({type: action});
         },

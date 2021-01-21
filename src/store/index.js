@@ -10,7 +10,6 @@ const initialState = {
     data: [],
 };
 
-// 不同请求的处理
 const reducer = (state, action) => {
     console.log("action: ", action);
     if(action.type === 'Init')
